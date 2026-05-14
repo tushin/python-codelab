@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Codelab Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css" />
+  <style>
+:root {
+  --background: #f5fbef;
+  --surface: #ffffff;
+  --surface-dim: #f0f6ea;
+  --surface-high: #e4eade;
+  --surface-variant: #dee4d9;
+  --text: #171d16;
+  --text-muted: #3f4a3c;
+  --outline: #becab9;
+  --primary: #4caf50;
+  --primary-deep: #006e1c;
+  --primary-soft: #e5f8e4;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-soft: 0 10px 30px rgba(40, 57, 44, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  color: var(--text);
+  background: var(--background);
+}
+
+.page-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(76, 175, 80, 0.16), transparent 36%),
+    radial-gradient(circle at 90% 30%, rgba(84, 95, 115, 0.12), transparent 32%),
+    linear-gradient(180deg, #f7fdf2 0%, #f5fbef 60%, #f0f6ea 100%);
+  z-index: -1;
+}
+
+.hub-wrap {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+  padding: 28px 18px 36px;
+}
+
+.hero {
+  background: linear-gradient(140deg, #ffffff 0%, #eef8ea 100%);
+  border: 1px solid var(--outline);
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 24px rgba(30, 44, 34, 0.06);
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(1.9rem, 3.2vw, 2.7rem);
+}
+
+.hero p {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  line-height: 1.65;
+  font-size: 1.18rem;
+}
+
+.section-title {
+  margin: 0 0 10px;
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: var(--primary-deep);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: 14px;
+  padding: 14px;
+  text-decoration: none;
+  color: inherit;
+  display: grid;
+  gap: 8px;
+  transition: 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: #9fbe99;
+  box-shadow: 0 10px 18px rgba(36, 63, 42, 0.08);
+}
+
+.chip {
+  display: inline-block;
+  width: fit-content;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary-deep);
+  background: #e8f7e7;
+  border: 1px solid #b9dfb5;
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 1.14rem;
+  line-height: 1.35;
+}
+
+.card p {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.meta {
+  font-size: 1rem;
+  color: #567156;
+  font-weight: 600;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--outline);
+  backdrop-filter: blur(8px);
+  background: color-mix(in srgb, #f5fbef 90%, white 10%);
+}
+
+.topbar-right {
+  min-width: min(340px, 42vw);
+  align-self: center;
+  display: grid;
+  gap: 8px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--primary-deep);
+  text-transform: uppercase;
+}
+
+.brand-wrap h1 {
+  margin: 4px 0 0;
+  font-size: clamp(1.5rem, 2.7vw, 2.1rem);
+  line-height: 1.2;
+}
+
+.hub-home-link {
+  justify-self: end;
+  text-decoration: none;
+  border: 1px solid var(--outline);
+  background: var(--surface);
+  color: var(--primary-deep);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.2;
+  transition: 0.2s ease;
+}
+
+.hub-home-link:hover {
+  background: var(--primary-soft);
+  border-color: rgba(76, 175, 80, 0.45);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 24px;
+  width: min(1400px, 100%);
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.sidebar {
+  position: sticky;
+  top: 98px;
+  height: calc(100vh - 114px);
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  box-shadow: var(--shadow-soft);
+}
+
+.sidebar h2 {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+}
+
+.toc {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 0;
+}
+
+.toc a {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1.25;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: 0.2s ease;
+}
+
+.toc .toc-item.toc-level-4 {
+  margin-left: 10px;
+  font-size: 14px;
+  padding-left: 9px;
+  border-left: 2px solid var(--surface-variant);
+}
+
+.toc a:hover,
+.toc a.active {
+  color: var(--primary-deep);
+  background: var(--primary-soft);
+  border-color: rgba(76, 175, 80, 0.4);
+}
+
+.toc .toc-item.toc-level-4.active {
+  border-left-color: var(--primary);
+}
+
+.content {
+  display: grid;
+  gap: 20px;
+}
+
+.hero-card,
+.lesson-card {
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.hero-card {
+  padding: 22px;
+  background-image: linear-gradient(140deg, #ffffff 0%, #f2f9ee 65%, #edf7eb 100%);
+}
+
+.hero-card.hero-with-image {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  padding: 20px;
+}
+
+.hero-copy p {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.hero-copy h2 {
+  margin: 0;
+}
+
+.hero-visual {
+  width: 100%;
+}
+
+.hero-visual img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 14px;
+  border: 1px solid #cfe0cb;
+  box-shadow: 0 14px 28px rgba(33, 70, 42, 0.12);
+}
+
+.hero-card h2 {
+  margin: 0;
+  font-size: clamp(1.95rem, 3.1vw, 2.8rem);
+}
+
+.hero-card p {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.lesson-card {
+  padding: 18px;
+}
+
+.lesson-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px dashed var(--outline);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.lesson-head h2 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
+}
+
+.lesson-body h3 {
+  font-size: 1.22rem;
+  margin: 16px 0 10px;
+}
+
+.lesson-body h4 {
+  font-size: 1.14rem;
+  margin: 14px 0 10px;
+  color: var(--primary-deep);
+}
+
+.lesson-body h5 ~ h4 {
+  margin-top: 40px;
+}
+
+.lesson-body p {
+  margin: 10px 0;
+  line-height: 1.7;
+}
+
+.lesson-body ul,
+.lesson-body ol {
+  margin: 8px 0 8px 22px;
+  line-height: 1.7;
+}
+
+.lesson-body li {
+  margin-bottom: 4px;
+}
+
+.lesson-body code {
+  font-family: "JetBrains Mono", monospace;
+  background: #edf4ec;
+  border: 1px solid #d4e4d1;
+  border-radius: 6px;
+  padding: 1px 6px;
+  font-size: 0.9em;
+}
+
+.code-wrap {
+  margin: 12px 0 16px;
+  border: 1px solid #d6e3d3;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #112019;
+}
+
+.code-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1b2f25;
+  color: #d6f5d6;
+  font-size: 16px;
+  padding: 8px 10px;
+}
+
+.copy-btn {
+  border: 1px solid rgba(214, 245, 214, 0.5);
+  background: transparent;
+  color: #d6f5d6;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  background: rgba(214, 245, 214, 0.15);
+}
+
+.code-wrap pre {
+  margin: 0;
+  padding: 14px;
+  overflow-x: auto;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.code-wrap pre code.hljs {
+  background: transparent;
+  padding: 0;
+  border: 0;
+}
+
+hr {
+  border: 0;
+  border-top: 1px dashed var(--outline);
+  margin: 18px 0;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    order: 2;
+    height: auto;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 680px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .topbar-right {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .hub-home-link {
+    justify-self: start;
+  }
+
+  .layout {
+    padding: 14px;
+    gap: 14px;
+  }
+
+  .lesson-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+
+  <main id="hubView" class="hub-wrap">
+    <section class="hero">
+      <h1>코드랩 모음</h1>
+      <p>이 페이지는 전체 코드랩의 시작점입니다. 아래 카드에서 주제를 선택하면 해당 코드랩 페이지로 이동합니다.</p>
+    </section>
+
+    <h2 class="section-title">Available Codelabs</h2>
+    <section id="hubGrid" class="grid" aria-label="코드랩 목록"></section>
+  </main>
+
+  <div id="codelabView" hidden>
+    <header class="topbar">
+      <div class="brand-wrap">
+        <p id="codelabEyebrow" class="eyebrow"></p>
+        <h1 id="codelabTitle"></h1>
+      </div>
+      <div class="topbar-right">
+        <a id="hubHomeLink" class="hub-home-link" href="./index.html">허브로 돌아가기</a>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>목차</h2>
+        <nav id="tocList" class="toc" aria-label="코드랩 목차"></nav>
+      </aside>
+
+      <main id="content" class="content" aria-live="polite"></main>
+    </div>
+
+    <template id="lessonTemplate">
+      <section class="lesson-card">
+        <div class="lesson-head">
+          <h2></h2>
+        </div>
+        <div class="lesson-body"></div>
+      </section>
+    </template>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script>
+const LAB_SLUGS = ["snake", "memory-game", "dino-run"];
+const HIDDEN_SECTION_TITLES = new Set(["목차", "진행 팁(부모용)"]);
+
+const hubView = document.getElementById("hubView");
+const hubGrid = document.getElementById("hubGrid");
+const codelabView = document.getElementById("codelabView");
+const contentRoot = document.getElementById("content");
+const tocRoot = document.getElementById("tocList");
+const lessonTemplate = document.getElementById("lessonTemplate");
+
+init().catch((error) => {
+  console.error(error);
+  showHub();
+  if (hubGrid) {
+    hubGrid.innerHTML = `<article class="card"><h2>불러오기 실패</h2><p>코드랩 목록을 불러오는 중 오류가 발생했습니다.</p></article>`;
+  }
+});
+
+async function init() {
+  const slug = getRequestedSlug();
+  if (!slug) {
+    await renderHub();
+    showHub();
+    return;
+  }
+
+  if (!LAB_SLUGS.includes(slug)) {
+    await renderHub();
+    showHub();
+    return;
+  }
+
+  await renderCodelab(slug);
+  showCodelab();
+}
+
+function getRequestedSlug() {
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get("lab") || "";
+  const normalized = normalizeSlug(raw);
+  return normalized || null;
+}
+
+function showHub() {
+  if (hubView) hubView.hidden = false;
+  if (codelabView) codelabView.hidden = true;
+}
+
+function showCodelab() {
+  if (hubView) hubView.hidden = true;
+  if (codelabView) codelabView.hidden = false;
+}
+
+async function renderHub() {
+  if (!hubGrid) return;
+  const infos = await Promise.all(LAB_SLUGS.map((slug) => loadInfo(slug)));
+
+  hubGrid.innerHTML = "";
+  infos.forEach((info) => {
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = `?lab=${encodeURIComponent(info.slug)}`;
+    a.innerHTML = `
+      <span class="chip">${escapeHtml(info.hubChip)}</span>
+      <h2>${escapeHtml(info.title)}</h2>
+      <p>${escapeHtml(info.hubSummary)}</p>
+    `;
+    hubGrid.appendChild(a);
+  });
+}
+
+async function renderCodelab(slug) {
+  const [info, markdownRaw] = await Promise.all([loadInfo(slug), loadMarkdown(slug)]);
+  const markdown = normalizeLabels(markdownRaw);
+  const tokens = parseMarkdown(markdown);
+  const sections = groupByH2(tokens);
+  const tocEntries = buildTocEntries(sections);
+
+  const eyebrow = document.getElementById("codelabEyebrow");
+  const pageTitle = document.getElementById("codelabTitle");
+  const hubLink = document.getElementById("hubHomeLink");
+  if (eyebrow) eyebrow.textContent = info.eyebrow;
+  if (pageTitle) pageTitle.textContent = info.title;
+  if (hubLink) {
+    hubLink.href = "./index.html";
+    hubLink.textContent = "허브로 돌아가기";
+  }
+
+  if (contentRoot) contentRoot.innerHTML = "";
+  if (tocRoot) tocRoot.innerHTML = "";
+
+  renderHero(info, slug);
+  renderSections(sections);
+  renderToc(tocEntries);
+  bindCopyButtons();
+  applySyntaxHighlighting();
+  observeSections(tocEntries);
+}
+
+async function loadInfo(slug) {
+  const text = await fetchText(`${slug}/INFO.md`);
+  const map = parseInfo(text);
+
+  return {
+    slug: normalizeSlug(map.slug || slug),
+    eyebrow: map.eyebrow || "Codelab",
+    title: map.title || "코드랩",
+    subtitle: map.subtitle || "입력, 계산, 렌더링 흐름을 한 단계씩 만들며 게임 구조를 익혀봅니다.",
+    heroAlt: map.hero_alt || `${map.title || "코드랩"} 대표 이미지`,
+    hubChip: map.hub_chip || "Python · Pygame",
+    hubSummary: map.hub_summary || "코드랩 설명이 준비 중입니다.",
+    hubMeta: map.hub_meta || "class 1 ~ class 4",
+  };
+}
+
+function parseInfo(text) {
+  const result = {};
+  const lines = text.replace(/\r/g, "").split("\n");
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line || line.startsWith("#")) continue;
+    const idx = line.indexOf(":");
+    if (idx < 1) continue;
+    const key = line.slice(0, idx).trim().toLowerCase();
+    const value = line.slice(idx + 1).trim();
+    if (!key || !value) continue;
+    result[key] = value;
+  }
+  return result;
+}
+
+async function loadMarkdown(slug) {
+  const text = (await fetchText(`${slug}/CODELAB.md`)).trim();
+  if (!text) {
+    throw new Error(`${slug}/CODELAB.md is empty`);
+  }
+  return text;
+}
+
+async function fetchText(path) {
+  const url = new URL(path, window.location.href);
+  const response = await fetch(url.toString(), { cache: "no-cache" });
+  if (!response.ok) {
+    throw new Error(`failed to fetch ${path}: ${response.status} ${response.statusText}`);
+  }
+  return response.text();
+}
+
+function normalizeSlug(value) {
+  const normalized = String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+  return normalized;
+}
+
+function normalizeLabels(markdown) {
+  return markdown
+    .replace(/^##\s*4차시 목차\s*$/m, "## 목차")
+    .replace(/(\d+)차시\./g, "class $1.")
+    .replace(/(\d+)차시:/g, "class $1.")
+    .replace(/(\d+)차시/g, "class $1.");
+}
+
+function parseMarkdown(markdown) {
+  const lines = markdown.replace(/\r/g, "").split("\n");
+  const tokens = [];
+
+  let inCode = false;
+  let codeLang = "";
+  let codeLines = [];
+  let listType = null;
+  let listItems = [];
+  let paragraphLines = [];
+
+  const flushParagraph = () => {
+    if (!paragraphLines.length) return;
+    const text = paragraphLines.join(" ").trim();
+    if (text) tokens.push({ type: "p", text });
+    paragraphLines = [];
+  };
+
+  const flushList = () => {
+    if (!listType || !listItems.length) return;
+    tokens.push({ type: listType, items: [...listItems] });
+    listType = null;
+    listItems = [];
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trimEnd();
+    const trimmed = line.trim();
+
+    if (inCode) {
+      if (trimmed.startsWith("```")) {
+        tokens.push({ type: "code", lang: codeLang || "text", content: codeLines.join("\n") });
+        inCode = false;
+        codeLang = "";
+        codeLines = [];
+      } else {
+        codeLines.push(line);
+      }
+      continue;
+    }
+
+    if (trimmed.startsWith("```")) {
+      flushParagraph();
+      flushList();
+      inCode = true;
+      codeLang = trimmed.slice(3).trim();
+      continue;
+    }
+
+    if (!trimmed) {
+      flushParagraph();
+      flushList();
+      continue;
+    }
+
+    if (trimmed === "---") {
+      flushParagraph();
+      flushList();
+      tokens.push({ type: "hr" });
+      continue;
+    }
+
+    if (trimmed.startsWith("##### ")) {
+      flushParagraph();
+      flushList();
+      tokens.push({ type: "h5", text: trimmed.slice(6).trim() });
+      continue;
+    }
+
+    if (trimmed.startsWith("#### ")) {
+      flushParagraph();
+      flushList();
+      tokens.push({ type: "h4", text: trimmed.slice(5).trim() });
+      continue;
+    }
+
+    if (trimmed.startsWith("### ")) {
+      flushParagraph();
+      flushList();
+      tokens.push({ type: "h3", text: trimmed.slice(4).trim() });
+      continue;
+    }
+
+    if (trimmed.startsWith("## ")) {
+      flushParagraph();
+      flushList();
+      tokens.push({ type: "h2", text: trimmed.slice(3).trim() });
+      continue;
+    }
+
+    const ulMatch = trimmed.match(/^[-*]\s+(.*)$/);
+    if (ulMatch) {
+      flushParagraph();
+      if (listType && listType !== "ul") flushList();
+      listType = "ul";
+      listItems.push(ulMatch[1]);
+      continue;
+    }
+
+    const olMatch = trimmed.match(/^\d+\.\s+(.*)$/);
+    if (olMatch) {
+      flushParagraph();
+      if (listType && listType !== "ol") flushList();
+      listType = "ol";
+      listItems.push(olMatch[1]);
+      continue;
+    }
+
+    paragraphLines.push(trimmed);
+  }
+
+  if (inCode && codeLines.length) {
+    tokens.push({ type: "code", lang: codeLang || "text", content: codeLines.join("\n") });
+  }
+
+  flushParagraph();
+  flushList();
+
+  return tokens;
+}
+
+function groupByH2(tokens) {
+  const sections = [];
+  let current = null;
+
+  for (const token of tokens) {
+    if (token.type === "h2") {
+      current = {
+        title: token.text,
+        id: makeId(token.text, sections.length),
+        tokens: [],
+      };
+      sections.push(current);
+      continue;
+    }
+
+    if (!current) {
+      current = {
+        title: "소개",
+        id: makeId("소개", 0),
+        tokens: [],
+      };
+      sections.push(current);
+    }
+
+    current.tokens.push(token);
+  }
+
+  return sections;
+}
+
+function shouldHideSection(title) {
+  return HIDDEN_SECTION_TITLES.has(title.trim());
+}
+
+function buildTocEntries(sections) {
+  const entries = [];
+
+  for (const section of sections) {
+    if (section.title !== "소개" && !shouldHideSection(section.title)) {
+      entries.push({
+        id: section.id,
+        title: section.title,
+        level: 2,
+      });
+    }
+
+    let stepIndex = 0;
+    for (const token of section.tokens) {
+      if (token.type !== "h4") continue;
+      if (!/단계/.test(token.text)) continue;
+
+      stepIndex += 1;
+      token.anchorId = `${section.id}-step-${stepIndex}`;
+      entries.push({
+        id: token.anchorId,
+        title: token.text,
+        level: 4,
+        parentId: section.id,
+      });
+    }
+  }
+
+  return entries;
+}
+
+function makeId(title, index) {
+  const safe = title
+    .toLowerCase()
+    .replace(/[^a-z0-9가-힣\s.-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+  return `${index + 1}-${safe || "section"}`;
+}
+
+function renderHero(info, slug) {
+  if (!contentRoot) return;
+  const hero = document.createElement("section");
+  hero.className = "hero-card hero-with-image";
+  hero.innerHTML = `
+    <div class="hero-visual">
+      <img src="${escapeHtml(`${slug}/hero.svg`)}" alt="${escapeHtml(info.heroAlt)}" loading="eager" />
+    </div>
+    <div class="hero-copy">
+      <h2>${escapeHtml(info.title)}</h2>
+      <p>${escapeHtml(info.subtitle)}</p>
+    </div>
+  `;
+  contentRoot.appendChild(hero);
+}
+
+function renderSections(sections) {
+  if (!contentRoot || !lessonTemplate) return;
+
+  for (const section of sections) {
+    if (shouldHideSection(section.title)) continue;
+
+    const frag = lessonTemplate.content.cloneNode(true);
+    const card = frag.querySelector(".lesson-card");
+    const head = frag.querySelector(".lesson-head h2");
+    const body = frag.querySelector(".lesson-body");
+
+    card.id = section.id;
+    head.textContent = section.title;
+
+    section.tokens.forEach((token) => {
+      body.appendChild(renderToken(token));
+    });
+
+    contentRoot.appendChild(frag);
+  }
+}
+
+function renderToken(token) {
+  switch (token.type) {
+    case "h3":
+      return textElement("h3", token.text);
+    case "h4":
+      return textElement("h4", token.text, token.anchorId);
+    case "h5":
+      return textElement("h5", token.text);
+    case "p": {
+      const p = document.createElement("p");
+      p.innerHTML = inline(token.text);
+      return p;
+    }
+    case "ul":
+    case "ol": {
+      const list = document.createElement(token.type);
+      token.items.forEach((item) => {
+        const li = document.createElement("li");
+        li.innerHTML = inline(item);
+        list.appendChild(li);
+      });
+      return list;
+    }
+    case "code": {
+      const wrap = document.createElement("div");
+      wrap.className = "code-wrap";
+
+      const head = document.createElement("div");
+      head.className = "code-head";
+      head.innerHTML = `<span>${escapeHtml(token.lang || "text")}</span>`;
+
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "copy-btn";
+      copyBtn.type = "button";
+      copyBtn.textContent = "복사";
+      copyBtn.dataset.copy = token.content;
+      head.appendChild(copyBtn);
+
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      code.className = `language-${normalizeLanguage(token.lang)}`;
+      code.textContent = token.content;
+      pre.appendChild(code);
+
+      wrap.appendChild(head);
+      wrap.appendChild(pre);
+      return wrap;
+    }
+    case "hr": {
+      return document.createElement("hr");
+    }
+    default:
+      return document.createElement("div");
+  }
+}
+
+function textElement(tag, text, id = null) {
+  const el = document.createElement(tag);
+  if (id) el.id = id;
+  el.innerHTML = inline(text);
+  return el;
+}
+
+function inline(text) {
+  const escaped = escapeHtml(text);
+  return escaped.replace(/`([^`]+)`/g, "<code>$1</code>");
+}
+
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function normalizeLanguage(lang) {
+  const value = (lang || "text").toLowerCase().trim();
+  if (!value) return "plaintext";
+  if (value === "py") return "python";
+  if (value === "js") return "javascript";
+  if (value === "ts") return "typescript";
+  if (value === "sh" || value === "zsh") return "bash";
+  if (value === "text") return "plaintext";
+  return value;
+}
+
+function applySyntaxHighlighting() {
+  if (typeof window.hljs === "undefined") return;
+  document.querySelectorAll(".code-wrap pre code").forEach((block) => {
+    window.hljs.highlightElement(block);
+  });
+}
+
+function renderToc(entries) {
+  if (!tocRoot) return;
+  for (const entry of entries) {
+    const a = document.createElement("a");
+    a.href = `#${entry.id}`;
+    a.textContent = entry.title;
+    a.dataset.target = entry.id;
+    a.classList.add("toc-item", `toc-level-${entry.level}`);
+    if (entry.parentId) a.dataset.parent = entry.parentId;
+    tocRoot.appendChild(a);
+  }
+}
+
+let copyButtonBound = false;
+function bindCopyButtons() {
+  if (copyButtonBound) return;
+  copyButtonBound = true;
+
+  document.addEventListener("click", async (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (!target.classList.contains("copy-btn")) return;
+
+    const code = target.dataset.copy || "";
+    try {
+      await navigator.clipboard.writeText(code);
+      const prev = target.textContent;
+      target.textContent = "복사됨";
+      setTimeout(() => {
+        target.textContent = prev || "복사";
+      }, 1000);
+    } catch {
+      target.textContent = "실패";
+      setTimeout(() => {
+        target.textContent = "복사";
+      }, 1000);
+    }
+  });
+}
+
+function observeSections(entries) {
+  const tocMap = new Map();
+  document.querySelectorAll(".toc a").forEach((a) => tocMap.set(a.dataset.target, a));
+
+  const targets = entries
+    .map((entry) => {
+      const el = document.getElementById(entry.id);
+      if (!el) return null;
+      return { ...entry, el };
+    })
+    .filter(Boolean);
+
+  if (!targets.length) return;
+
+  const setActive = (id) => {
+    document.querySelectorAll(".toc a.active").forEach((el) => el.classList.remove("active"));
+
+    const activeLink = tocMap.get(id);
+    if (activeLink) activeLink.classList.add("active");
+
+    const parentId = activeLink?.dataset.parent;
+    if (parentId) {
+      const parentLink = tocMap.get(parentId);
+      if (parentLink) parentLink.classList.add("active");
+    }
+  };
+
+  const updateActiveByScroll = () => {
+    const offset = 140;
+    let currentId = targets[0].id;
+
+    for (const target of targets) {
+      if (target.el.getBoundingClientRect().top - offset <= 0) {
+        currentId = target.id;
+      } else {
+        break;
+      }
+    }
+
+    setActive(currentId);
+  };
+
+  updateActiveByScroll();
+  window.addEventListener("scroll", updateActiveByScroll, { passive: true });
+  window.addEventListener("resize", updateActiveByScroll);
+}
+  </script>
+</body>
+</html>

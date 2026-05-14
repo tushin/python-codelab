@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Python Snake Lab - Lesson 4: Collision</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#171d16",
+                      "on-tertiary-container": "#243448",
+                      "secondary-fixed-dim": "#bcc7de",
+                      "on-secondary-fixed-variant": "#3c475a",
+                      "surface-bright": "#f5fbef",
+                      "on-error-container": "#93000a",
+                      "inverse-surface": "#2c322a",
+                      "error": "#ba1a1a",
+                      "surface-container-low": "#f0f6ea",
+                      "on-primary-container": "#003c0b",
+                      "on-tertiary": "#ffffff",
+                      "background": "#f5fbef",
+                      "primary-container": "#4caf50",
+                      "tertiary-fixed-dim": "#b7c8e1",
+                      "tertiary-container": "#8c9cb5",
+                      "primary-fixed": "#94f990",
+                      "error-container": "#ffdad6",
+                      "on-primary-fixed-variant": "#005313",
+                      "inverse-on-surface": "#edf3e7",
+                      "on-tertiary-fixed": "#0b1c30",
+                      "tertiary-fixed": "#d3e4fe",
+                      "on-secondary-fixed": "#111c2d",
+                      "on-surface": "#171d16",
+                      "outline": "#6f7a6b",
+                      "tertiary": "#505f76",
+                      "inverse-primary": "#78dc77",
+                      "surface-tint": "#006e1c",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container": "#eaf0e4",
+                      "on-primary-fixed": "#002204",
+                      "outline-variant": "#becab9",
+                      "on-surface-variant": "#3f4a3c",
+                      "secondary-fixed": "#d8e3fb",
+                      "on-tertiary-fixed-variant": "#38485d",
+                      "on-secondary": "#ffffff",
+                      "primary-fixed-dim": "#78dc77",
+                      "secondary-container": "#d5e0f8",
+                      "on-error": "#ffffff",
+                      "surface-dim": "#d6dcd0",
+                      "secondary": "#545f73",
+                      "primary": "#006e1c",
+                      "surface": "#f5fbef",
+                      "surface-container-highest": "#dee4d9",
+                      "surface-container-high": "#e4eade",
+                      "on-secondary-container": "#586377",
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#dee4d9"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "base": "8px",
+                      "lg": "24px",
+                      "sm": "12px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "48px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "body-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .code-line-number {
+            user-select: none;
+            text-align: right;
+            padding-right: 1rem;
+            color: #94A3B8;
+        }
+        .syntax-keyword { color: #006e1c; font-weight: 600; }
+        .syntax-function { color: #545f73; }
+        .syntax-string { color: #003c0b; }
+        .syntax-comment { color: #94A3B8; font-style: italic; }
+        .syntax-variable { color: #171d16; }
+        .game-grid {
+            background-image: radial-gradient(#becab9 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden h-screen flex flex-col">
+<!-- TopNavBar Component -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-lg h-16 w-full bg-surface-container shadow-sm">
+<div class="flex items-center gap-xl">
+<span class="font-display-md text-display-md font-bold text-primary">Python Snake Lab</span>
+<div class="hidden md:flex gap-lg items-center">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Curriculum</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Sandbox</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Community</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Documentation</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="flex items-center gap-xs px-lg py-sm bg-primary text-on-primary rounded-lg font-label-md active:scale-95 transition-transform">
+                Next Step
+            </button>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer text-2xl" data-icon="account_circle">account_circle</span>
+</div>
+</nav>
+<!-- Main Content Area with SideNav -->
+<div class="flex flex-1 pt-16 h-full overflow-hidden">
+<!-- SideNavBar Component -->
+<aside class="h-full w-64 bg-surface-dim flex flex-col border-r border-outline-variant">
+<div class="p-lg flex flex-col gap-xs">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" data-icon="pest_control">pest_control</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-on-surface font-bold">Snake Masterclass</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Module 1: Basics</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-md py-sm flex flex-col gap-xs overflow-y-auto">
+<div class="flex items-center gap-md text-on-surface-variant p-md hover:bg-surface-container-high transition-all rounded-lg cursor-pointer">
+<span class="material-symbols-outlined" data-icon="start">start</span>
+<span class="font-label-sm text-label-sm">Introduction</span>
+</div>
+<div class="flex items-center gap-md text-on-surface-variant p-md hover:bg-surface-container-high transition-all rounded-lg cursor-pointer">
+<span class="material-symbols-outlined" data-icon="refresh">refresh</span>
+<span class="font-label-sm text-label-sm">Game Loop</span>
+</div>
+<div class="flex items-center gap-md text-on-surface-variant p-md hover:bg-surface-container-high transition-all rounded-lg cursor-pointer">
+<span class="material-symbols-outlined" data-icon="grid_4x4">grid_4x4</span>
+<span class="font-label-sm text-label-sm">Coordinates</span>
+</div>
+<div class="flex items-center gap-md text-on-surface-variant p-md hover:bg-surface-container-high transition-all rounded-lg cursor-pointer">
+<span class="material-symbols-outlined" data-icon="directions_run">directions_run</span>
+<span class="font-label-sm text-label-sm">Movement</span>
+</div>
+<div class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-lg p-md">
+<span class="material-symbols-outlined" data-icon="error_outline">error_outline</span>
+<span class="font-label-sm text-label-sm font-bold">Collision</span>
+</div>
+</nav>
+<div class="p-md border-t border-outline-variant flex flex-col gap-sm">
+<button class="w-full bg-primary-container text-on-primary-container p-md rounded-lg font-label-md hover:bg-primary transition-colors active:translate-x-1">
+                    Unlock Pro
+                </button>
+<div class="flex flex-col gap-xs">
+<div class="flex items-center gap-md text-on-surface-variant p-md hover:bg-surface-container-high rounded-lg cursor-pointer">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</div>
+<div class="flex items-center gap-md text-on-surface-variant p-md hover:bg-surface-container-high rounded-lg cursor-pointer">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-sm text-label-sm">Help</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Lab Content Canvas -->
+<main class="flex-1 flex overflow-hidden">
+<!-- Left Panel: Lesson Text -->
+<section class="w-1/4 border-r border-outline-variant bg-surface overflow-y-auto p-lg flex flex-col gap-xl">
+<div>
+<span class="bg-secondary-container text-on-secondary-container px-sm py-xs rounded text-label-sm font-bold">STEP 4</span>
+<h1 class="font-headline-md text-headline-md text-on-background mt-sm">Detecting Collisions</h1>
+<p class="text-body-md text-on-surface-variant mt-md">
+                        In this lesson, we will implement the core logic for collision detection. Without it, your snake could pass through its own tail or travel indefinitely past the laboratory boundaries.
+                    </p>
+</div>
+<!-- Key Concept Callout -->
+<div class="bg-surface-container-low border border-outline-variant p-lg rounded-xl">
+<div class="flex items-center gap-sm text-primary mb-sm">
+<span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+<span class="font-label-md text-label-md font-bold">Key Concept</span>
+</div>
+<p class="text-body-sm text-on-surface">
+                        Collision detection in a grid-based game is as simple as comparing the (x, y) coordinates of the head with every (x, y) coordinate in the body array.
+                    </p>
+</div>
+<div class="flex flex-col gap-md">
+<h2 class="font-label-md text-label-md font-bold text-on-surface uppercase tracking-wider">Instructions</h2>
+<ul class="flex flex-col gap-sm">
+<li class="flex gap-sm">
+<span class="text-primary font-bold">1.</span>
+<span class="text-body-sm text-on-surface-variant">Access the <code class="bg-surface-container-high px-1 rounded">snake_head</code> coordinates.</span>
+</li>
+<li class="flex gap-sm">
+<span class="text-primary font-bold">2.</span>
+<span class="text-body-sm text-on-surface-variant">Loop through the <code class="bg-surface-container-high px-1 rounded">snake_body</code> segments.</span>
+</li>
+<li class="flex gap-sm">
+<span class="text-primary font-bold">3.</span>
+<span class="text-body-sm text-on-surface-variant">Return <code class="bg-surface-container-high px-1 rounded">True</code> if a match is found.</span>
+</li>
+</ul>
+</div>
+</section>
+<!-- Center Panel: Code Editor -->
+<section class="flex-1 bg-surface-container-lowest flex flex-col relative">
+<div class="h-12 border-b border-outline-variant flex items-center px-lg bg-surface-container-low justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="code">code</span>
+<span class="font-label-md text-label-md font-bold">collision.py</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</button>
+</div>
+</div>
+<div class="flex-1 font-mono text-sm p-lg overflow-y-auto bg-white flex">
+<div class="flex flex-col code-line-number text-label-sm pr-lg border-r border-outline-variant mr-lg leading-6">
+<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+</div>
+<pre class="leading-6"><span class="syntax-keyword">def</span> <span class="syntax-function">check_collision</span>(snake_head, snake_body):
+    <span class="syntax-comment">"""
+    Checks if the snake head has collided 
+    with any part of its body.
+    """</span>
+    <span class="syntax-keyword">for</span> segment <span class="syntax-keyword">in</span> snake_body[<span class="syntax-body-sm">1</span>:]:
+        <span class="syntax-keyword">if</span> snake_head.x == segment.x <span class="syntax-keyword">and</span> \
+           snake_head.y == segment.y:
+            <span class="syntax-keyword">return</span> <span class="syntax-keyword">True</span>
+            
+    <span class="syntax-keyword">return</span> <span class="syntax-keyword">False</span>
+
+<span class="syntax-comment"># Laboratory Test Case</span>
+<span class="syntax-variable">result</span> = <span class="syntax-function">check_collision</span>(head, body)
+<span class="syntax-function">print</span>(<span class="syntax-string">f"Collision Detected: {result}"</span>)</pre>
+</div>
+<!-- FAB Suppression Rule: FAB is on Dashboard/Home, but we keep a "Run Code" Action here -->
+<div class="absolute bottom-lg right-lg">
+<button class="bg-primary text-on-primary h-14 w-14 rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-3xl" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+</section>
+<!-- Right Panel: Preview & Console -->
+<section class="w-1/3 bg-surface-container-high flex flex-col">
+<div class="h-1/2 p-lg flex flex-col gap-md">
+<div class="flex justify-between items-center">
+<h3 class="font-label-md text-label-md font-bold text-on-surface uppercase tracking-wider">Live Preview</h3>
+<div class="flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-xs text-on-surface-variant font-medium">LIVE</span>
+</div>
+</div>
+<!-- Game Canvas Container -->
+<div class="flex-1 bg-white border border-outline-variant rounded-xl game-grid relative overflow-hidden flex items-center justify-center p-xl">
+<div class="relative w-full h-full">
+<!-- Snake Head -->
+<div class="absolute w-5 h-5 bg-primary rounded-sm shadow-sm" style="top: 40px; left: 80px;">
+<div class="absolute top-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+<div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+</div>
+<!-- Snake Body -->
+<div class="absolute w-5 h-5 bg-primary opacity-60 rounded-sm" style="top: 40px; left: 60px;"></div>
+<div class="absolute w-5 h-5 bg-primary opacity-60 rounded-sm" style="top: 60px; left: 60px;"></div>
+<div class="absolute w-5 h-5 bg-primary opacity-60 rounded-sm" style="top: 60px; left: 80px;"></div>
+<!-- Food -->
+<div class="absolute w-5 h-5 bg-error rounded-full shadow-sm" style="top: 120px; left: 140px;"></div>
+</div>
+</div>
+</div>
+<!-- Console Panel -->
+<div class="h-1/2 p-lg border-t border-outline-variant bg-on-background flex flex-col font-mono text-xs">
+<div class="flex justify-between items-center mb-md border-b border-surface-variant pb-base">
+<span class="text-surface-variant font-bold">CONSOLE_LOGS v2.0</span>
+<span class="material-symbols-outlined text-surface-variant text-sm cursor-pointer" data-icon="delete_sweep">delete_sweep</span>
+</div>
+<div class="flex-1 overflow-y-auto flex flex-col gap-xs text-secondary-fixed-dim">
+<div class="flex gap-md">
+<span class="text-primary opacity-70">[10:42:01]</span>
+<span>Initializing Physics Engine...</span>
+</div>
+<div class="flex gap-md">
+<span class="text-primary opacity-70">[10:42:02]</span>
+<span>Loading coordinate grid 20x20...</span>
+</div>
+<div class="flex gap-md">
+<span class="text-primary opacity-70">[10:42:05]</span>
+<span class="text-primary-fixed">SUCCESS:</span>
+<span>Main game loop running at 60fps.</span>
+</div>
+<div class="flex gap-md">
+<span class="text-primary opacity-70">[10:42:12]</span>
+<span class="text-secondary-fixed">EVENT:</span>
+<span>Snake head moved to (80, 40).</span>
+</div>
+<div class="flex gap-md animate-pulse">
+<span class="text-primary opacity-70">[10:42:15]</span>
+<span class="text-error">WARNING:</span>
+<span>Check Collision function awaiting user logic.</span>
+</div>
+</div>
+<div class="mt-md pt-base border-t border-surface-variant flex items-center gap-sm">
+<span class="text-primary">&gt;</span>
+<input class="bg-transparent border-none text-white focus:ring-0 p-0 text-xs w-full" placeholder="Type a command..." type="text"/>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>
