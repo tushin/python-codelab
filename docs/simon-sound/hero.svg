@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="simon sound hero">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#1f2937"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#bg)"/>
+  <circle cx="480" cy="270" r="180" fill="#0f172a" stroke="#475569" stroke-width="6"/>
+  <path d="M480 270 L480 110 A160 160 0 0 1 640 270 Z" fill="#ef4444"/>
+  <path d="M480 270 L640 270 A160 160 0 0 1 480 430 Z" fill="#22c55e"/>
+  <path d="M480 270 L480 430 A160 160 0 0 1 320 270 Z" fill="#3b82f6"/>
+  <path d="M480 270 L320 270 A160 160 0 0 1 480 110 Z" fill="#eab308"/>
+  <circle cx="480" cy="270" r="62" fill="#0b1220" stroke="#94a3b8" stroke-width="4"/>
+  <text x="422" y="278" fill="#e2e8f0" font-size="28" font-family="Arial" font-weight="700">SIMON</text>
+  <text x="350" y="490" fill="#cbd5e1" font-size="28" font-family="Arial">Listen · Remember · Repeat</text>
+</svg>

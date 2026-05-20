@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="pacman hero">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#020617"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#bg)"/>
+  <rect x="150" y="70" width="660" height="400" rx="18" fill="#0f172a" stroke="#1d4ed8" stroke-width="4"/>
+  <g stroke="#1d4ed8" stroke-width="2" opacity="0.8">
+    <line x1="210" y1="120" x2="750" y2="120"/>
+    <line x1="210" y1="170" x2="750" y2="170"/>
+    <line x1="210" y1="220" x2="750" y2="220"/>
+    <line x1="210" y1="270" x2="750" y2="270"/>
+    <line x1="210" y1="320" x2="750" y2="320"/>
+    <line x1="210" y1="370" x2="750" y2="370"/>
+    <line x1="210" y1="420" x2="750" y2="420"/>
+  </g>
+  <g fill="#fde047">
+    <circle cx="280" cy="250" r="28"/>
+    <polygon points="280,250 312,234 312,266" fill="#0f172a"/>
+  </g>
+  <circle cx="360" cy="250" r="6" fill="#f8fafc"/>
+  <circle cx="410" cy="250" r="6" fill="#f8fafc"/>
+  <circle cx="460" cy="250" r="6" fill="#f8fafc"/>
+  <g>
+    <path d="M560 270 C560 230 620 230 620 270 L620 300 L560 300 Z" fill="#ef4444"/>
+    <circle cx="578" cy="268" r="6" fill="#fff"/><circle cx="602" cy="268" r="6" fill="#fff"/>
+    <circle cx="580" cy="270" r="3" fill="#111"/><circle cx="600" cy="270" r="3" fill="#111"/>
+  </g>
+  <text x="350" y="500" fill="#cbd5e1" font-size="34" font-family="Arial" font-weight="700">PAC-MAN CODELAB</text>
+</svg>

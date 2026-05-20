@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Codelab Hub favicon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ecffe8" />
+      <stop offset="100%" stop-color="#a8e6a3" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f8a2f" />
+      <stop offset="100%" stop-color="#1bb14a" />
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#bg)" />
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="none" stroke="#ffffff" stroke-opacity="0.75" stroke-width="2" />
+  <path d="M24 22L15 32L24 42" fill="none" stroke="url(#accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M40 22L49 32L40 42" fill="none" stroke="url(#accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="48.5" cy="17.5" r="5.5" fill="#fff47f" />
+  <path d="M48.5 11.5V14.2M48.5 20.8V23.5M42.5 17.5H45.2M51.8 17.5H54.5" fill="none" stroke="#0a7728" stroke-width="1.8" stroke-linecap="round" />
+</svg>
