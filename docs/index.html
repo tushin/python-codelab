@@ -857,13 +857,13 @@ function buildTocEntries(sections) {
       });
     }
 
-    let stepIndex = 0;
+    let subsectionIndex = 0;
     for (const token of section.tokens) {
       if (token.type !== "h4") continue;
-      if (!/단계/.test(token.text)) continue;
+      if (!/(단계|최종 코드)/.test(token.text)) continue;
 
-      stepIndex += 1;
-      token.anchorId = `${section.id}-step-${stepIndex}`;
+      subsectionIndex += 1;
+      token.anchorId = `${section.id}-sub-${subsectionIndex}`;
       entries.push({
         id: token.anchorId,
         title: token.text,

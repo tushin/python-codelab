@@ -240,6 +240,98 @@ while True:
   - `pygame.display.flip()`: 현재 프레임 렌더링 결과를 화면에 반영한다.
   - `clock.tick(60)`: 프레임 속도를 제한해 실행 속도를 안정화한다.
 
+#### class 1 최종 코드
+
+```python
+import pygame
+import random
+import sys
+
+pygame.init()
+
+ROWS, COLS = 4, 4
+CARD_W, CARD_H = 120, 120
+GAP = 14
+MARGIN = 24
+
+WIDTH = MARGIN * 2 + COLS * CARD_W + (COLS - 1) * GAP
+HEIGHT = 160 + ROWS * CARD_H + (ROWS - 1) * GAP
+
+BG = (245, 250, 244)
+BACK = (73, 115, 84)
+FRONT = (255, 255, 255)
+TEXT = (20, 28, 25)
+LINE = (180, 196, 183)
+
+SYMBOLS = ["A", "B", "C", "D", "E", "F", "G", "H"]
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Memory Game - Class 1")
+clock = pygame.time.Clock()
+font_title = pygame.font.SysFont("arial", 34, bold=True)
+font_card = pygame.font.SysFont("arial", 52, bold=True)
+
+def build_deck(rows, cols):
+    pair_count = (rows * cols) // 2
+    selected = SYMBOLS[:pair_count]
+    deck = selected * 2
+    random.shuffle(deck)
+    return deck
+
+def make_cards(rows, cols):
+    deck = build_deck(rows, cols)
+    cards = []
+    idx = 0
+
+    for r in range(rows):
+        for c in range(cols):
+            x = MARGIN + c * (CARD_W + GAP)
+            y = 120 + r * (CARD_H + GAP)
+            rect = pygame.Rect(x, y, CARD_W, CARD_H)
+            cards.append(
+                {
+                    "symbol": deck[idx],
+                    "revealed": False,
+                    "matched": False,
+                    "rect": rect,
+                }
+            )
+            idx += 1
+    return cards
+
+def draw_cards(surface, cards):
+    for card in cards:
+        if card["revealed"] or card["matched"]:
+            pygame.draw.rect(surface, FRONT, card["rect"], border_radius=14)
+            pygame.draw.rect(surface, LINE, card["rect"], 2, border_radius=14)
+            text = font_card.render(card["symbol"], True, TEXT)
+            text_rect = text.get_rect(center=card["rect"].center)
+            surface.blit(text, text_rect)
+        else:
+            pygame.draw.rect(surface, BACK, card["rect"], border_radius=14)
+
+cards = make_cards(ROWS, COLS)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            pos = event.pos
+            for card in cards:
+                if card["rect"].collidepoint(pos) and not card["revealed"] and not card["matched"]:
+                    card["revealed"] = True
+                    break
+
+    screen.fill(BG)
+    title = font_title.render("Memory Game", True, TEXT)
+    screen.blit(title, (MARGIN, 28))
+    draw_cards(screen, cards)
+    pygame.display.flip()
+    clock.tick(60)
+```
+
 ---
 
 ## class 2. 두 장 비교 + 짝 판정
@@ -381,6 +473,127 @@ if evaluating:
   - `if now - evaluate_started >= 800:`: 카드 공개 후 0.8초가 지난 시점에만 비교를 실행해 확인 시간을 보장한다.
   - `resolve_pair(cards, first_pick, second_pick)`: 두 카드의 짝 여부를 확정해 `matched` 또는 `revealed` 상태를 바꾸고, 다음 입력 가능 상태로 넘어가게 한다.
 
+#### class 2 최종 코드
+
+```python
+import pygame
+import random
+import sys
+
+pygame.init()
+
+ROWS, COLS = 4, 4
+CARD_W, CARD_H = 120, 120
+GAP = 14
+MARGIN = 24
+
+WIDTH = MARGIN * 2 + COLS * CARD_W + (COLS - 1) * GAP
+HEIGHT = 160 + ROWS * CARD_H + (ROWS - 1) * GAP
+
+BG = (245, 250, 244)
+BACK = (73, 115, 84)
+FRONT = (255, 255, 255)
+TEXT = (20, 28, 25)
+LINE = (180, 196, 183)
+
+SYMBOLS = ["A", "B", "C", "D", "E", "F", "G", "H"]
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Memory Game - Class 2")
+clock = pygame.time.Clock()
+font_title = pygame.font.SysFont("arial", 34, bold=True)
+font_card = pygame.font.SysFont("arial", 52, bold=True)
+
+def build_deck(rows, cols):
+    pair_count = (rows * cols) // 2
+    selected = SYMBOLS[:pair_count]
+    deck = selected * 2
+    random.shuffle(deck)
+    return deck
+
+def make_cards(rows, cols):
+    deck = build_deck(rows, cols)
+    cards = []
+    idx = 0
+    for r in range(rows):
+        for c in range(cols):
+            x = MARGIN + c * (CARD_W + GAP)
+            y = 120 + r * (CARD_H + GAP)
+            rect = pygame.Rect(x, y, CARD_W, CARD_H)
+            cards.append(
+                {
+                    "symbol": deck[idx],
+                    "revealed": False,
+                    "matched": False,
+                    "rect": rect,
+                }
+            )
+            idx += 1
+    return cards
+
+def draw_cards(surface, cards):
+    for card in cards:
+        if card["revealed"] or card["matched"]:
+            pygame.draw.rect(surface, FRONT, card["rect"], border_radius=14)
+            pygame.draw.rect(surface, LINE, card["rect"], 2, border_radius=14)
+            text = font_card.render(card["symbol"], True, TEXT)
+            text_rect = text.get_rect(center=card["rect"].center)
+            surface.blit(text, text_rect)
+        else:
+            pygame.draw.rect(surface, BACK, card["rect"], border_radius=14)
+
+def resolve_pair(cards, first_idx, second_idx):
+    first = cards[first_idx]
+    second = cards[second_idx]
+    if first["symbol"] == second["symbol"]:
+        first["matched"] = True
+        second["matched"] = True
+    else:
+        first["revealed"] = False
+        second["revealed"] = False
+
+cards = make_cards(ROWS, COLS)
+first_pick = None
+second_pick = None
+evaluating = False
+evaluate_started = 0
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if evaluating:
+                continue
+            pos = event.pos
+            for i, card in enumerate(cards):
+                if card["rect"].collidepoint(pos) and not card["revealed"] and not card["matched"]:
+                    card["revealed"] = True
+                    if first_pick is None:
+                        first_pick = i
+                    elif second_pick is None:
+                        second_pick = i
+                        evaluating = True
+                        evaluate_started = pygame.time.get_ticks()
+                    break
+
+    if evaluating:
+        now = pygame.time.get_ticks()
+        if now - evaluate_started >= 800:
+            resolve_pair(cards, first_pick, second_pick)
+            first_pick = None
+            second_pick = None
+            evaluating = False
+
+    screen.fill(BG)
+    title = font_title.render("Memory Game", True, TEXT)
+    screen.blit(title, (MARGIN, 28))
+    draw_cards(screen, cards)
+    pygame.display.flip()
+    clock.tick(60)
+```
+
 ---
 
 ## class 3. 승리 조건 + 재시작 + 시도 횟수
@@ -448,6 +661,8 @@ def is_win(cards):
 ##### 코드 블럭의 핵심코드 및 처음 배우는 표현 설명
   - `def is_win(cards):`: `is_win()` 함수 정의를 시작해 관련 로직을 기능 단위로 분리한다.
   - `return all(card["matched"] for card in cards)`: 모든 카드의 매칭 완료 여부를 한 번에 판정해, 클리어 화면 전환 조건으로 바로 사용할 수 있게 한다.
+  - `all(...)`을 사용하면 반복문 없이도 "하나라도 False면 실패" 규칙을 간결하게 표현할 수 있다.
+  - `is_win(cards)`를 함수로 분리해 매 프레임 UI 갱신과 입력 분기에서 같은 승리 규칙을 재사용할 수 있다.
 
 #### 단계 3) 재시작 함수
 
@@ -529,6 +744,171 @@ screen.blit(msg, (MARGIN + 170, 76))
   - `if is_win(cards):`: 모든 카드 매칭이 끝났을 때만 승리 상태를 켜 클리어 판정을 정확히 맞춘다.
   - `state = reset_game()`: 초기화 함수 반환 상태를 한 번에 받아 각 상태 변수를 동기화된 값으로 갱신한다.
 
+#### class 3 최종 코드
+
+```python
+import pygame
+import random
+import sys
+
+pygame.init()
+
+ROWS, COLS = 4, 4
+CARD_W, CARD_H = 120, 120
+GAP = 14
+MARGIN = 24
+
+WIDTH = MARGIN * 2 + COLS * CARD_W + (COLS - 1) * GAP
+HEIGHT = 160 + ROWS * CARD_H + (ROWS - 1) * GAP
+
+BG = (245, 250, 244)
+BACK = (73, 115, 84)
+FRONT = (255, 255, 255)
+TEXT = (20, 28, 25)
+LINE = (180, 196, 183)
+
+SYMBOLS = ["A", "B", "C", "D", "E", "F", "G", "H"]
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Memory Game - Class 3")
+clock = pygame.time.Clock()
+font_title = pygame.font.SysFont("arial", 34, bold=True)
+font_card = pygame.font.SysFont("arial", 52, bold=True)
+font_info = pygame.font.SysFont("arial", 28, bold=True)
+
+def build_deck(rows, cols):
+    pair_count = (rows * cols) // 2
+    selected = SYMBOLS[:pair_count]
+    deck = selected * 2
+    random.shuffle(deck)
+    return deck
+
+def make_cards(rows, cols):
+    deck = build_deck(rows, cols)
+    cards = []
+    idx = 0
+    for r in range(rows):
+        for c in range(cols):
+            x = MARGIN + c * (CARD_W + GAP)
+            y = 120 + r * (CARD_H + GAP)
+            rect = pygame.Rect(x, y, CARD_W, CARD_H)
+            cards.append(
+                {
+                    "symbol": deck[idx],
+                    "revealed": False,
+                    "matched": False,
+                    "rect": rect,
+                }
+            )
+            idx += 1
+    return cards
+
+def draw_cards(surface, cards):
+    for card in cards:
+        if card["revealed"] or card["matched"]:
+            pygame.draw.rect(surface, FRONT, card["rect"], border_radius=14)
+            pygame.draw.rect(surface, LINE, card["rect"], 2, border_radius=14)
+            text = font_card.render(card["symbol"], True, TEXT)
+            text_rect = text.get_rect(center=card["rect"].center)
+            surface.blit(text, text_rect)
+        else:
+            pygame.draw.rect(surface, BACK, card["rect"], border_radius=14)
+
+def resolve_pair(cards, first_idx, second_idx):
+    first = cards[first_idx]
+    second = cards[second_idx]
+    if first["symbol"] == second["symbol"]:
+        first["matched"] = True
+        second["matched"] = True
+    else:
+        first["revealed"] = False
+        second["revealed"] = False
+
+def is_win(cards):
+    return all(card["matched"] for card in cards)
+
+def reset_game():
+    new_cards = make_cards(ROWS, COLS)
+    return {
+        "cards": new_cards,
+        "first_pick": None,
+        "second_pick": None,
+        "evaluating": False,
+        "evaluate_started": 0,
+        "tries": 0,
+        "win": False,
+    }
+
+state = reset_game()
+cards = state["cards"]
+first_pick = state["first_pick"]
+second_pick = state["second_pick"]
+evaluating = state["evaluating"]
+evaluate_started = state["evaluate_started"]
+tries = state["tries"]
+win = state["win"]
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+            state = reset_game()
+            cards = state["cards"]
+            first_pick = state["first_pick"]
+            second_pick = state["second_pick"]
+            evaluating = state["evaluating"]
+            evaluate_started = state["evaluate_started"]
+            tries = state["tries"]
+            win = state["win"]
+
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if evaluating or win:
+                continue
+
+            pos = event.pos
+            for i, card in enumerate(cards):
+                if card["rect"].collidepoint(pos) and not card["revealed"] and not card["matched"]:
+                    card["revealed"] = True
+                    if first_pick is None:
+                        first_pick = i
+                    elif second_pick is None:
+                        second_pick = i
+                        evaluating = True
+                        evaluate_started = pygame.time.get_ticks()
+                        tries += 1
+                    break
+
+    if evaluating:
+        now = pygame.time.get_ticks()
+        if now - evaluate_started >= 800:
+            resolve_pair(cards, first_pick, second_pick)
+            first_pick = None
+            second_pick = None
+            evaluating = False
+
+    if is_win(cards):
+        win = True
+
+    screen.fill(BG)
+    title = font_title.render("Memory Game", True, TEXT)
+    screen.blit(title, (MARGIN, 28))
+    tries_text = font_info.render(f"tries: {tries}", True, TEXT)
+    screen.blit(tries_text, (MARGIN, 76))
+
+    if win:
+        msg = font_info.render("clear! press R to restart", True, (21, 107, 42))
+    else:
+        msg = font_info.render("find all pairs", True, TEXT)
+    screen.blit(msg, (MARGIN + 170, 76))
+
+    draw_cards(screen, cards)
+    pygame.display.flip()
+    clock.tick(60)
+```
+
 ---
 
 ## class 4. 제한 시간 + 난이도 확장
@@ -569,6 +949,7 @@ game_over = False
   - `TIME_LIMIT = 75`: 제한 시간을 초 단위 상수로 고정해 타이머 계산과 UI 안내 기준을 일치시킨다.
   - `started_at = pygame.time.get_ticks()`: 게임 시작 시각을 저장해 경과 시간과 남은 시간을 매 프레임 일관되게 계산한다.
   - `game_over = False`: 게임 상태를 즉시 종료 상태로 전환해 입력/업데이트 루프가 플레이 모드에서 빠져나오게 한다.
+  - `TIME_LIMIT`를 상수로 분리해 두면 난이도 조절 시 타이머 로직 전체를 건드리지 않고 시간값만 바꾸면 된다.
 
 #### 단계 2) 매 프레임 남은 시간 계산
 
@@ -614,6 +995,7 @@ elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
   - `elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:`: 이벤트 타입을 비교해 입력/업데이트 처리를 분기한다.
   - `if evaluating or win or game_over:`: 비교 중이거나 게임이 끝난 상태에서는 클릭을 막아 의도치 않은 상태 변경을 차단한다.
   - `continue`: 현재 반복의 나머지 처리를 건너뛰고 다음 입력/객체 검사로 넘어가도록 제어 흐름을 전환한다.
+  - `if evaluating or win or game_over:`를 한 줄로 묶어 비교 중/승리/시간초과 상태에서 동일한 안전 규칙을 유지한다.
 
 #### 단계 4) 난이도 확장 예시
 
@@ -631,9 +1013,12 @@ elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
   - `state`: 초기화 함수 반환 상태를 잠깐 담아 여러 상태 변수를 한 번에 갱신한다.
 
 ##### 코드 블럭의 핵심코드 및 처음 배우는 표현 설명
-  - 이 단계는 설정/주석 중심이며 다음 단계 동작을 준비하는 코드다.
+  - `# 입문: ROWS, COLS = 4, 4`: 16장(8쌍) 구성으로 초급 학습자가 규칙을 빠르게 익히도록 시작 난이도를 낮춘다.
+  - `# 확장: ROWS, COLS = 4, 5`: 카드 수를 20장으로 늘려 기억 부담과 탐색 시간이 함께 증가하는 중급 모드를 만든다.
+  - `# 고급: ROWS, COLS = 6, 6`: 36장 구성으로 긴 플레이 타임과 높은 난도를 요구하는 고급 모드로 확장할 수 있다.
+  - `ROWS, COLS`만 바꾸는 구조라서 카드 생성, 배치, 판정 로직을 수정하지 않고도 난이도를 단계적으로 조정할 수 있다.
 
-### class 4 최종 코드
+#### class 4 최종 코드
 
 ```python
 import pygame

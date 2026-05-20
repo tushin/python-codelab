@@ -189,7 +189,7 @@ for event in pygame.event.get():
   - `snake_x %= GRID_W`: 모듈로 대입으로 좌표를 보드 범위 안에 유지한다.
   - `elif event.type == pygame.KEYDOWN:`: 이벤트 타입을 비교해 입력/업데이트 처리를 분기한다.
 
-### class 1 최종 코드
+#### class 1 최종 코드
 
 ```python
 import pygame
@@ -290,6 +290,8 @@ direction = (1, 0)
 ##### 코드 블럭의 핵심코드 및 처음 배우는 표현 설명
   - `snake = [(10, 10), (9, 10), (8, 10)]`: 머리+몸통이 포함된 초기 길이를 만들어 이동, 성장, 자기충돌 규칙을 바로 테스트할 수 있게 한다.
   - `direction = (1, 0)`: 초기 진행 방향을 오른쪽으로 고정해 첫 프레임 이동 결과가 예측 가능하게 만든다.
+  - `snake = [(10, 10), (9, 10), (8, 10)]`처럼 초기 몸통을 3칸으로 두면 먹이 섭취 전에도 머리/몸통 렌더링 차이를 바로 확인할 수 있다.
+  - `direction`을 튜플로 관리하면 입력 이벤트에서 `(dx, dy)`를 한 번에 교체해 이동 계산식을 단순하게 유지할 수 있다.
 
 #### 단계 2) 이동 로직을 "새 머리 삽입"으로 변경
 
@@ -395,7 +397,7 @@ draw_cell(screen, (255, 90, 90), food[0], food[1])
   - `draw_cell(screen, color, part[0], part[1])`: 뱀의 각 몸통 좌표를 한 칸씩 그려 현재 길이와 위치를 프레임마다 갱신해 보여준다.
   - `draw_cell(screen, (255, 90, 90), food[0], food[1])`: 먹이 좌표를 별도 색으로 표시해 플레이어가 다음 목표 위치를 바로 인식하게 한다.
 
-### class 2 최종 코드
+#### class 2 최종 코드
 
 ```python
 import pygame
@@ -542,6 +544,7 @@ if hit_wall or hit_self:
   - `if hit_wall or hit_self:`: 벽 또는 자기몸 충돌 중 하나라도 참이면 즉시 게임오버로 전환한다.
   - `hit_self = new_head in snake`: 자기 몸 충돌 여부를 따로 계산해 벽 충돌과 합쳐 명확한 종료 조건을 만든다.
   - `game_over = True`: 게임 상태를 즉시 종료 상태로 전환해 입력/업데이트 루프가 플레이 모드에서 빠져나오게 한다.
+  - `hit_wall`과 `hit_self`를 분리해 계산하면 디버깅할 때 어떤 충돌이 발생했는지 원인을 빠르게 추적할 수 있다.
 
 #### 단계 3) 상태값 도입
 
@@ -564,6 +567,7 @@ if not game_over:
   - `if not game_over:`: 게임오버가 아닐 때만 일반 업데이트를 수행해 종료 후 상태 변경을 막는다.
   - `game_over = False`: 게임 상태를 즉시 종료 상태로 전환해 입력/업데이트 루프가 플레이 모드에서 빠져나오게 한다.
   - `pass`: 아직 동작을 채우지 않은 자리로 두되, 문법을 유지해 루프 흐름을 계속 진행하게 한다.
+  - `if not game_over:` 조건 가드를 먼저 두면 이후 이동/충돌/점수 로직을 모두 같은 보호 범위 안에서 안전하게 실행할 수 있다.
 
 #### 단계 4) 재시작 초기화 함수 작성
 
@@ -632,7 +636,7 @@ if game_over:
   - `if game_over:`: 종료 상태일 때만 게임오버 메시지를 표시해 플레이 화면과 안내 화면을 분리한다.
   - `font = pygame.font.SysFont(None, 36)`: HUD/안내문 렌더링에 쓸 폰트를 먼저 만들어 프레임마다 텍스트를 안정적으로 그릴 수 있게 한다.
 
-### class 3 최종 코드
+#### class 3 최종 코드
 
 ```python
 import pygame
@@ -757,11 +761,6 @@ while True:
 - `SPACE`로 시작/일시정지를 전환한다.
 - 게임오버 후 재시작 흐름을 완성한다.
 
-### 현재 구현 기준 참고
-
-- 코드에 `speed = min(20, 9 + score // 3)` 로직이 포함되어 HUD 값은 증가한다.
-- 이동 틱은 `pygame.time.set_timer(MOVE_EVENT, 100)`으로 고정되어 있어, 실제 이동 속도는 이 타이머 값의 영향을 가장 크게 받는다.
-
 ### 핵심 변수/함수
 
 - `started`: 첫 시작 전 대기 상태인지 여부
@@ -868,6 +867,8 @@ if event.type == MOVE_EVENT and started and not paused and not game_over:
 ##### 코드 블럭의 핵심코드 및 처음 배우는 표현 설명
   - `if event.type == MOVE_EVENT and started and not paused and not game_over:`: 이벤트 타입을 비교해 입력/업데이트 처리를 분기한다.
   - `pass`: 아직 동작을 채우지 않은 자리로 두되, 문법을 유지해 루프 흐름을 계속 진행하게 한다.
+  - `started` 조건을 함께 검사해 시작 전 안내 상태에서는 뱀이 이동하지 않도록 게임 흐름을 분리한다.
+  - `not paused` 조건으로 일시정지 중 상태값이 바뀌는 것을 막아 재개 시점에 프레임 점프를 방지한다.
 
 #### 단계 5) HUD + 상태 메시지 표시
 
@@ -897,7 +898,7 @@ elif paused:
   - `if not started:`: 아직 시작 전일 때만 시작 플래그를 바꿔 첫 입력과 이후 입력 동작을 구분한다.
   - `hud = small.render(f"Score: {score} Best: {best_score} Speed: {speed}", True, TEXT)`: 점수·최고점·속도 정보를 한 번에 렌더링한 텍스트로 만들어 HUD 영역에 즉시 출력할 수 있게 한다.
 
-### class 4 최종 코드
+#### class 4 최종 코드
 
 ```python
 import pygame
@@ -1040,14 +1041,3 @@ while True:
     pygame.display.flip()
     clock.tick(speed)
 ```
-
----
-
-## 진행 팁(부모용)
-
-- 각 class의 최종 코드는 반드시 실행해 보고 다음 class로 넘어간다.
-- 에러가 났을 때는 "마지막으로 바꾼 5줄"만 먼저 되돌려 확인한다.
-- class 4 이후 확장 과제 예시
-  - 벽 통과 모드/충돌 모드 토글
-  - 난수 시드 고정 후 리플레이 비교
-  - 최고점수 파일 저장(`json`)

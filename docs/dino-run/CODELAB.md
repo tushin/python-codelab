@@ -143,7 +143,7 @@ if dino_y > GROUND_Y - DINO_H:
   - `dino_y += dino_vy`: 갱신된 속도를 위치에 반영해 공룡의 실제 화면 위치를 위/아래로 이동시킨다.
   - `dino_y = GROUND_Y - DINO_H`: 공룡의 초기 y좌표를 바닥선에 맞춰 시작 직후 공중/관통 상태가 생기지 않게 한다.
 
-### class 1 최종 코드
+#### class 1 최종 코드
 
 ```python
 import pygame
@@ -232,6 +232,8 @@ world_speed = 7
 ##### 코드 블럭의 핵심코드 및 처음 배우는 표현 설명
   - `obstacles = []`: 장애물 목록을 비워 시작해 이전 판 데이터가 새 게임에 섞이지 않게 한다.
   - `world_speed = 7`: 기본 이동 속도를 정해 장애물 이동 체감 난이도를 일정하게 시작한다.
+  - `obstacles`를 리스트로 두면 매 프레임 전체 장애물에 같은 이동/삭제 규칙을 순서대로 적용할 수 있다.
+  - `world_speed`를 변수로 분리해 두면 난이도 조정 시 이동 계산식을 뜯어고치지 않고 값만 조정하면 된다.
 
 #### 단계 2) 생성 타이머 등록
 
@@ -250,6 +252,8 @@ pygame.time.set_timer(SPAWN_EVENT, 1100)
 ##### 코드 블럭의 핵심코드 및 처음 배우는 표현 설명
   - `pygame.time.set_timer(SPAWN_EVENT, 1100)`: 일정 주기 이벤트를 등록해 업데이트 박자를 고정한다.
   - `SPAWN_EVENT = pygame.USEREVENT + 1`: 사용자 이벤트 번호를 분리해 일반 입력 이벤트와 장애물 생성 이벤트를 안전하게 구분한다.
+  - `1100`ms 간격을 먼저 고정하면 초반에는 장애물이 과도하게 쌓이지 않아 점프 리듬을 익히기 쉽다.
+  - `pygame.time.set_timer(...)` 방식은 PC 성능 차이가 있어도 장애물 생성 주기를 "시간 기준"으로 일정하게 유지한다.
 
 #### 단계 3) 장애물 생성 함수
 
@@ -305,6 +309,80 @@ obstacles = [ob for ob in obstacles if ob.right > -10]
   - `for ob in obstacles:`: 장애물 목록 전체를 순회해 이동·충돌·렌더링 규칙을 동일하게 적용한다.
   - `spawn_obstacle()`: 새 장애물을 목록에 추가해 다음 프레임부터 이동/충돌 판정 대상이 생기게 한다.
   - `ob.x -= world_speed`: 각 장애물의 x좌표를 줄여 화면 오른쪽에서 왼쪽으로 이동하는 효과를 만든다.
+
+#### class 2 최종 코드
+
+```python
+import random
+import sys
+import pygame
+
+pygame.init()
+
+WIDTH, HEIGHT = 1000, 320
+GROUND_Y = 250
+
+BG = (247, 247, 247)
+LINE = (70, 70, 70)
+DINO_COLOR = (32, 32, 32)
+CACTUS = (36, 140, 74)
+
+DINO_W, DINO_H = 44, 52
+DINO_X = 90
+GRAVITY = 0.72
+JUMP_POWER = -13.8
+
+SPAWN_EVENT = pygame.USEREVENT + 1
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Dino Run - Class 2")
+clock = pygame.time.Clock()
+
+dino_y = GROUND_Y - DINO_H
+dino_vy = 0.0
+obstacles = []
+world_speed = 7
+
+pygame.time.set_timer(SPAWN_EVENT, 1100)
+
+def spawn_obstacle():
+    h = random.choice([36, 44, 58])
+    w = random.choice([18, 22, 26])
+    rect = pygame.Rect(WIDTH + 20, GROUND_Y - h, w, h)
+    obstacles.append(rect)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            on_ground = dino_y >= GROUND_Y - DINO_H
+            if on_ground:
+                dino_vy = JUMP_POWER
+        elif event.type == SPAWN_EVENT:
+            spawn_obstacle()
+
+    dino_vy += GRAVITY
+    dino_y += dino_vy
+    if dino_y > GROUND_Y - DINO_H:
+        dino_y = GROUND_Y - DINO_H
+        dino_vy = 0
+
+    for ob in obstacles:
+        ob.x -= world_speed
+    obstacles = [ob for ob in obstacles if ob.right > -10]
+
+    screen.fill(BG)
+    pygame.draw.line(screen, LINE, (0, GROUND_Y), (WIDTH, GROUND_Y), 3)
+    dino_rect = pygame.Rect(DINO_X, int(dino_y), DINO_W, DINO_H)
+    pygame.draw.rect(screen, DINO_COLOR, dino_rect, border_radius=4)
+    for ob in obstacles:
+        pygame.draw.rect(screen, CACTUS, ob, border_radius=3)
+
+    pygame.display.flip()
+    clock.tick(60)
+```
 
 ---
 
@@ -399,6 +477,103 @@ if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
 ##### 코드 블럭의 핵심코드 및 처음 배우는 표현 설명
   - `if event.type == pygame.KEYDOWN and event.key == pygame.K_r:`: 이벤트 타입을 비교해 입력/업데이트 처리를 분기한다.
   - `reset_game()`: 위치·속도·장애물·상태를 초기값으로 되돌려 재시작 직후 플레이 가능한 상태를 즉시 복원한다.
+  - `R` 키를 재시작 전용으로 고정해 게임오버 직후 사용자가 다음 행동을 헷갈리지 않게 한다.
+  - `reset_game()`을 입력 이벤트 안에서 바로 호출하면 다음 프레임부터 충돌 판정과 이동이 새 상태 기준으로 즉시 재개된다.
+
+#### class 3 최종 코드
+
+```python
+import random
+import sys
+import pygame
+
+pygame.init()
+
+WIDTH, HEIGHT = 1000, 320
+GROUND_Y = 250
+
+BG = (247, 247, 247)
+LINE = (70, 70, 70)
+DINO_COLOR = (32, 32, 32)
+CACTUS = (36, 140, 74)
+TEXT = (40, 40, 40)
+
+DINO_W, DINO_H = 44, 52
+DINO_X = 90
+GRAVITY = 0.72
+JUMP_POWER = -13.8
+
+RUNNING = "running"
+GAME_OVER = "game_over"
+SPAWN_EVENT = pygame.USEREVENT + 1
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Dino Run - Class 3")
+clock = pygame.time.Clock()
+font = pygame.font.SysFont("arial", 28, bold=True)
+small = pygame.font.SysFont("arial", 19)
+
+def spawn_obstacle(obstacles):
+    h = random.choice([36, 44, 58])
+    w = random.choice([18, 22, 26])
+    rect = pygame.Rect(WIDTH + 20, GROUND_Y - h, w, h)
+    obstacles.append(rect)
+
+def reset_game():
+    return GROUND_Y - DINO_H, 0.0, [], RUNNING
+
+dino_y, dino_vy, obstacles, game_state = reset_game()
+world_speed = 7
+pygame.time.set_timer(SPAWN_EVENT, 1100)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+            dino_y, dino_vy, obstacles, game_state = reset_game()
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and game_state == RUNNING:
+            on_ground = dino_y >= GROUND_Y - DINO_H
+            if on_ground:
+                dino_vy = JUMP_POWER
+        elif event.type == SPAWN_EVENT and game_state == RUNNING:
+            spawn_obstacle(obstacles)
+
+    if game_state == RUNNING:
+        dino_vy += GRAVITY
+        dino_y += dino_vy
+        if dino_y > GROUND_Y - DINO_H:
+            dino_y = GROUND_Y - DINO_H
+            dino_vy = 0
+
+        for ob in obstacles:
+            ob.x -= world_speed
+        obstacles = [ob for ob in obstacles if ob.right > -10]
+
+        dino_rect = pygame.Rect(DINO_X, int(dino_y), DINO_W, DINO_H)
+        for ob in obstacles:
+            if dino_rect.colliderect(ob):
+                game_state = GAME_OVER
+                break
+    else:
+        dino_rect = pygame.Rect(DINO_X, int(dino_y), DINO_W, DINO_H)
+
+    screen.fill(BG)
+    pygame.draw.line(screen, LINE, (0, GROUND_Y), (WIDTH, GROUND_Y), 3)
+    pygame.draw.rect(screen, DINO_COLOR, dino_rect, border_radius=4)
+    for ob in obstacles:
+        pygame.draw.rect(screen, CACTUS, ob, border_radius=3)
+
+    if game_state == GAME_OVER:
+        t1 = font.render("Game Over", True, TEXT)
+        t2 = small.render("Press R to restart", True, TEXT)
+        screen.blit(t1, (WIDTH // 2 - t1.get_width() // 2, 70))
+        screen.blit(t2, (WIDTH // 2 - t2.get_width() // 2, 105))
+
+    pygame.display.flip()
+    clock.tick(60)
+```
 
 ---
 
@@ -461,6 +636,8 @@ if game_state == RUNNING:
 ##### 코드 블럭의 핵심코드 및 처음 배우는 표현 설명
   - `if game_state == RUNNING:`: 실행 상태일 때만 이동/충돌/점수 갱신을 진행해 일시정지·종료 상태와 로직을 분리한다.
   - `score += dt * 0.01`: 프레임 시간(`dt`) 기반으로 점수를 누적해 FPS 차이가 있어도 같은 시간 대비 비슷하게 점수가 오른다.
+  - `if game_state == RUNNING:` 가드 안에서 점수를 누적하면 입력 처리 지연이 있어도 생존 시간 기준 점수 흐름을 유지한다.
+  - `score`를 실수형으로 누적하면 작은 시간 단위 변화도 반영되어 점수가 갑자기 튀는 느낌을 줄일 수 있다.
 
 #### 단계 3) 속도 증가
 
@@ -477,6 +654,9 @@ world_speed = 7 + min(8, int(score // 120))
 
 ##### 코드 블럭의 핵심코드 및 처음 배우는 표현 설명
   - `world_speed = 7 + min(8, int(score // 120))`: 기본 이동 속도를 정해 장애물 이동 체감 난이도를 일정하게 시작한다.
+  - `score // 120`은 점수를 구간으로 나눠 속도 증가 타이밍을 예측 가능하게 만든다.
+  - `min(8, ...)`으로 증가량 상한을 두어 후반 난이도가 과도하게 폭증하는 것을 막는다.
+  - `7 + ...` 구조는 기본 이동 감각을 유지한 채 추가값만 변하도록 해 학습자가 난이도 변화를 체감하기 쉽게 한다.
 
 #### 단계 4) 시작/일시정지 키
 
@@ -502,7 +682,7 @@ elif event.key == pygame.K_p and game_state == PAUSED:
   - `elif event.key == pygame.K_p and game_state == RUNNING:`: 플레이 중 P 입력에서만 일시정지로 전환해 상태 토글 기준을 명확히 한다.
   - `game_state = PAUSED`: 초기 상태를 `RUNNING`으로 지정해 시작 직후 업데이트 루프가 바로 동작하게 한다.
 
-### class 4 최종 코드
+#### class 4 최종 코드
 
 ```python
 import random
