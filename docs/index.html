@@ -526,7 +526,7 @@ hr {
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
   <script>
-const LAB_SLUGS = ["snake", "memory-game", "dino-run", "tetris", "breakout", "suika-physics", "simon-sound", "pacman"];
+const LAB_SLUGS = ["snake", "memory-game", "dino-run", "tetris", "breakout", "suika-physics", "simon-sound", "pacman", "flappy-physics"];
 const HIDDEN_SECTION_TITLES = new Set(["목차", "진행 팁(부모용)"]);
 
 const hubView = document.getElementById("hubView");
@@ -990,7 +990,34 @@ function textElement(tag, text, id = null) {
 
 function inline(text) {
   const escaped = escapeHtml(text);
-  return escaped.replace(/`([^`]+)`/g, "<code>$1</code>");
+  const segments = escaped.split(/(`[^`]+`)/g);
+  return segments
+    .map((segment) => {
+      if (segment.startsWith("`") && segment.endsWith("`")) {
+        return `<code>${segment.slice(1, -1)}</code>`;
+      }
+
+      return segment.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (match, label, href) => {
+        const safeHref = sanitizeHref(href);
+        if (!safeHref) return match;
+        if (safeHref.startsWith("http://") || safeHref.startsWith("https://")) {
+          return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+        }
+        return `<a href="${safeHref}">${label}</a>`;
+      });
+    })
+    .join("");
+}
+
+function sanitizeHref(href) {
+  const value = String(href).trim();
+  if (!value) return null;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  if (value.startsWith("/")) return value;
+  if (value.startsWith("./")) return value;
+  if (value.startsWith("../")) return value;
+  if (value.startsWith("#")) return value;
+  return null;
 }
 
 function escapeHtml(text) {

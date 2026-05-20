@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="flappy physics hero">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#89d7ff"/>
+      <stop offset="100%" stop-color="#d7f5ff"/>
+    </linearGradient>
+    <linearGradient id="pipe" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6cbf2f"/>
+      <stop offset="100%" stop-color="#95e23c"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="960" height="540" fill="url(#bg)"/>
+  <circle cx="120" cy="110" r="44" fill="#fff9d4" opacity="0.9"/>
+
+  <rect x="0" y="450" width="960" height="90" fill="#8fd46f"/>
+  <rect x="0" y="442" width="960" height="12" fill="#72b93a"/>
+
+  <rect x="610" y="40" width="90" height="220" rx="6" fill="url(#pipe)" stroke="#4e8f23" stroke-width="4"/>
+  <rect x="590" y="230" width="130" height="28" rx="6" fill="#7fd733" stroke="#4e8f23" stroke-width="4"/>
+
+  <rect x="610" y="330" width="90" height="210" rx="6" fill="url(#pipe)" stroke="#4e8f23" stroke-width="4"/>
+  <rect x="590" y="330" width="130" height="28" rx="6" fill="#7fd733" stroke="#4e8f23" stroke-width="4"/>
+
+  <g transform="translate(350 250)">
+    <ellipse cx="0" cy="0" rx="44" ry="34" fill="#ffe153" stroke="#d7a61f" stroke-width="5"/>
+    <circle cx="14" cy="-8" r="7" fill="#1f2937"/>
+    <polygon points="35,0 66,10 35,20" fill="#ff9f1c" stroke="#c76900" stroke-width="4"/>
+    <path d="M-18 3 C-5 -8, 10 -8, 24 5" stroke="#f4c136" stroke-width="7" fill="none"/>
+    <rect x="-56" y="-8" width="20" height="12" rx="6" fill="#fff" opacity="0.8"/>
+  </g>
+
+  <rect x="54" y="42" width="292" height="80" rx="16" fill="#fff9e7" stroke="#d9b650" stroke-width="4"/>
+  <text x="80" y="94" font-family="Verdana, sans-serif" font-size="38" font-weight="700" fill="#f59e0b">FLAPPY PHYSICS LAB</text>
+
+  <rect x="64" y="136" width="300" height="126" rx="14" fill="#0f172a" opacity="0.9"/>
+  <g font-family="'JetBrains Mono', monospace" font-size="22" fill="#d1fae5">
+    <text x="84" y="176">space.gravity = (0, 1750)</text>
+    <text x="84" y="208">bird.velocity = (0, -420)</text>
+    <text x="84" y="240">font.render(score, True, white)</text>
+  </g>
+</svg>

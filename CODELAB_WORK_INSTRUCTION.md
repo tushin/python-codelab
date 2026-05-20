@@ -41,12 +41,17 @@ project-root/
 - `docs/index.html`은 사이트의 단일 진입점이다.
 - `shared/`, `codelabs/` 같은 중간 디렉토리를 다시 만들지 않는다.
 - 코드랩별 `index.html`을 만들지 않는다.
+- 코드랩별 리소스(이미지, 폰트, 압축 파일 등)는 반드시 `docs/<slug>/` 하위에 둔다.
+- 루트 공용 `resources/` 디렉토리는 사용하지 않는다.
 
 ### 코드랩 단위 필수 파일
 각 코드랩 디렉토리(`docs/<slug>/`)는 반드시 아래 3개를 가진다.
 - `INFO.md`
 - `CODELAB.md`
 - `hero.svg`
+
+리소스가 필요한 경우 아래 디렉토리를 코드랩별로 추가한다.
+- `resources/` (예: `docs/flappy-physics/resources/FlappySprite.png`)
 
 ---
 
@@ -85,6 +90,7 @@ hub_meta: class 1 ~ class 4
 
 ### 문서 최상위 구성
 - `## 개요`
+- `## 리소스 준비 체크` (리소스가 필요한 코드랩인 경우)
 - `## 목차`
 - `## class 1. ...`
 - `## class 2. ...`
@@ -99,6 +105,14 @@ hub_meta: class 1 ~ class 4
   - 실행 환경
 - 실행 환경에는 Python 버전과 필수 패키지 설치 명령을 함께 적는다.
   - 예: `Python 3.10+ / pip install pygame`
+- 개요에는 리소스 다운로드 링크를 넣지 않는다.
+
+### 리소스 준비 체크 섹션 규칙
+- 리소스가 필요한 코드랩은 `## 리소스 준비 체크`를 `개요` 바로 다음, `목차` 앞에 둔다.
+- 다운로드 링크는 마크다운 링크 형식으로 작성한다.
+  - 예: `[FlappyResource.zip](/docs/flappy-physics/resources/FlappyResource.zip)`
+- 링크 경로는 반드시 같은 코드랩 디렉토리의 `resources/`를 가리킨다.
+- 압축 해제 후 배치 예시를 함께 적는다.
 
 ### 목차 섹션 규칙
 - class 단위 항목을 숫자 목록(1~4)으로 작성한다.
@@ -137,8 +151,9 @@ hub_meta: class 1 ~ class 4
 
 1. `docs/<slug>/` 디렉토리를 생성한다.
 2. `INFO.md`, `CODELAB.md`, `hero.svg`를 작성/배치한다.
-3. `docs/index.html` 인라인 스크립트의 `LAB_SLUGS` 배열에 `<slug>`를 추가한다.
-4. 브라우저에서 `http://127.0.0.1:3000/?lab=<slug>`와 허브 카드 노출을 확인한다.
+3. 리소스가 있으면 `docs/<slug>/resources/` 하위에만 배치한다.
+4. `docs/index.html` 인라인 스크립트의 `LAB_SLUGS` 배열에 `<slug>`를 추가한다.
+5. 브라우저에서 `http://127.0.0.1:3000/?lab=<slug>`와 허브 카드 노출을 확인한다.
 
 주의:
 - 허브 카드는 `LAB_SLUGS`와 `INFO.md`를 기반으로 자동 렌더링된다.
@@ -152,6 +167,7 @@ hub_meta: class 1 ~ class 4
 - `docs/<slug>/CODELAB.md`: 본문 학습 콘텐츠 수정
 - `docs/<slug>/INFO.md`: 제목/설명/카드 문구/접근성 텍스트 수정
 - `docs/<slug>/hero.svg`: 대표 이미지 수정
+- `docs/<slug>/resources/`: 코드랩 전용 리소스 수정/추가/교체
 
 ### 공통 UI/로직 수정
 - `docs/index.html` 내부 인라인 `<style>`: 레이아웃/디자인 변경
@@ -216,6 +232,9 @@ hub_meta: class 1 ~ class 4
 - [ ] 목차 하이라이트/코드 복사/하이라이팅이 정상 동작하는가
 - [ ] 모바일에서 허브 1열, 상세 레이아웃이 깨지지 않는가
 - [ ] `shared/`, `codelabs/`, 코드랩별 `index.html`이 다시 생기지 않았는가
-- [ ] `CODELAB.md`가 `개요 → 목차 → class(목표/핵심 변수·함수/단계별 구현/최종 코드)` 순서를 지키는가
+- [ ] 코드랩 리소스가 `docs/<slug>/resources/` 하위에만 있는가
+- [ ] 루트 공용 `resources/` 디렉토리가 생기지 않았는가
+- [ ] 리소스가 필요한 코드랩에서 `리소스 준비 체크`가 `개요` 다음, `목차` 앞에 있는가
+- [ ] `CODELAB.md`가 `개요 → (리소스 준비 체크) → 목차 → class(목표/핵심 변수·함수/단계별 구현/최종 코드)` 순서를 지키는가
 - [ ] 각 단계에 `세부목표`, 코드 블럭, 변수/함수 목적, 핵심코드 설명 4개 섹션이 모두 있는가
 - [ ] 상세 목차에 `단계` 항목과 `class n 최종 코드` 항목이 함께 표시되는가
